@@ -1,0 +1,35 @@
+version: "3.5"
+services:
+  app:
+    image: ghcr.io/suecharo/sapporo-service-nii:latest
+    container_name: sapporo-service
+    volumes:
+      - ${PWD}/sapporo:/app/sapporo
+      - ${PWD}/tests:/app/tests
+      # The ones below are mounted for cwltool and DinD.
+      - ${PWD}/run:${PWD}/run
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /tmp:/tmp
+    environment:
+      # Priority: [Command Line Argument] -> [Environment Variable] -> [Default Values]
+      - SAPPORO_HOST=0.0.0.0
+      - SAPPORO_PORT=1122
+      - SAPPORO_DEBUG=True
+      - SAPPORO_RUN_DIR=${PWD}/run
+      # - SAPPORO_DATA_REMOVE_OLDER_THAN_DAYS=30
+      # - SAPPORO_GET_RUNS=True
+      # - SAPPORO_RUN_ONLY_REGISTERED_WORKFLOWS=False
+      # - SAPPORO_ACCESS_CONTROL_ALLOW_ORIGIN=*
+      # - SAPPORO_URL_PREFIX=/
+      - JWT_PASSWORD=test_please_edit_here
+    ports:
+      - 0.0.0.0:1122:1122
+    restart: on-failure
+    working_dir: /app
+    command: [ "sapporo" ]
+    networks:
+      - sapporo
+
+networks:
+  sapporo:
+    name: sapporo-network

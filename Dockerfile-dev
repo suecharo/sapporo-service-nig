@@ -3,6 +3,7 @@ FROM python:3.8.17-bullseye
 RUN apt update && \
     apt install -y --no-install-recommends \
     curl \
+    git \
     jq \
     tini && \
     apt clean && \
@@ -18,6 +19,11 @@ WORKDIR /app
 COPY . .
 RUN python3 -m pip install --no-cache-dir --progress-bar off -U pip setuptools wheel && \
     python3 -m pip install --no-cache-dir --progress-bar off -e .[tests]
+
+WORKDIR /tmp
+RUN git clone --depth 1 https://github.com/RCOSDP/rdmclient.git && \
+    cd rdmclient && \
+    python3 -m pip install .
 
 ENV SAPPORO_HOST 0.0.0.0
 ENV SAPPORO_PORT 1122
