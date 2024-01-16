@@ -37,6 +37,7 @@ setup(
     install_requires=[
         "cwl-inputs-parser>=1.0.2",
         "flask-cors",
+        "flask-jwt-extended",
         "flask",
         "jsonschema",
         "psutil",

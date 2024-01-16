@@ -3,6 +3,7 @@
 import argparse
 import json
 import os
+import secrets
 from argparse import ArgumentParser, Namespace
 from pathlib import Path
 from sys import version_info
@@ -136,6 +137,7 @@ class Config(TypedDict):
     run_sh: Path
     url_prefix: str
     access_control_allow_origin: str
+    jwt_secret_key: str
 
 
 def resolve_path_from_cwd(path: Union[Path, Tuple[Path]]) -> Path:
@@ -168,7 +170,8 @@ def get_config(args: Optional[TypedNamespace] = None) -> Config:
         "executable_workflows": resolve_path_from_cwd(executable_workflows),
         "run_sh": resolve_path_from_cwd(run_sh),
         "url_prefix": args.url_prefix or str(os.environ.get("SAPPORO_URL_PREFIX", DEFAULT_URL_PREFIX)),
-        "access_control_allow_origin": os.environ.get("SAPPORO_ACCESS_CONTROL_ALLOW_ORIGIN", DEFAULT_ACCESS_CONTROL_ALLOW_ORIGIN)
+        "access_control_allow_origin": os.environ.get("SAPPORO_ACCESS_CONTROL_ALLOW_ORIGIN", DEFAULT_ACCESS_CONTROL_ALLOW_ORIGIN),
+        "jwt_secret_key": os.environ.get("JWT_SECRET_KEY", secrets.token_hex(24))  # TODO: fix
     }
 
 

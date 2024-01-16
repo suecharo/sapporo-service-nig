@@ -5,6 +5,7 @@ from traceback import format_exc
 
 from flask import Flask, Response, current_app, jsonify
 from flask_cors import CORS
+from flask_jwt_extended import JWTManager
 from werkzeug.exceptions import HTTPException
 
 from sapporo.config import (Config, TypedNamespace, get_config, parse_args,
@@ -57,6 +58,7 @@ def create_app(config: Config) -> Flask:
     app.config["EXECUTABLE_WORKFLOWS"] = config["executable_workflows"]
     app.config["RUN_SH"] = config["run_sh"]
     app.config["URL_PREFIX"] = config["url_prefix"]
+    app.config["JWT_SECRET_KEY"] = config["jwt_secret_key"]
     if config["debug"]:
         app.config["FLASK_ENV"] = "development"
         app.config["DEBUG"] = True
@@ -70,6 +72,7 @@ def main() -> None:
     args: TypedNamespace = parse_args(sys.argv[1:])
     config: Config = get_config(args)
     app: Flask = create_app(config)
+    JWTManager(app)
     app.run(
         host=config["host"],
         port=config["port"],
